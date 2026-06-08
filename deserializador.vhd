@@ -2,8 +2,6 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
-
-
 entity deserializer_v2 is
   Generic (
     N_bits : integer := 16;
@@ -38,7 +36,8 @@ begin
         if rising_edge(i_fpga_clk) then 
         
             prev_word_valid <= actual_word_valid;
-            
+
+            -- Sincronizado de señales de control de entrada
             r1_bit_clk <= i_bit_clk;
             r2_bit_clk <= r1_bit_clk;
             r3_bit_clk <= r2_bit_clk;
@@ -48,7 +47,6 @@ begin
             
             if r3_bit_clk = '0' and r2_bit_clk = '1' then
                 for i in 0 to N_chan-1 loop
-                    --shift_register(i) <= shift_register(i)(N_bits-2 downto 0) & i_data(i);
                     shift_register((i+1)*N_bits-1 downto i*N_bits) <= shift_register((i+1)*N_bits-2 downto i*N_bits) & i_data(i);    
                 end loop;
         
@@ -59,12 +57,10 @@ begin
                 end if;
                 
                 if bit_count = N_bits-1 then
-                    --o_word_valid <= '1';
                     o_word_valid_slow <= '1';
                     actual_word_valid <= '1';
                     o_word <= shift_register;
                 else
-                    --o_word_valid <= '0';
                     o_word_valid_slow <= '0';
                     actual_word_valid <= '0';
                 end if;
