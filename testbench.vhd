@@ -20,11 +20,9 @@ entity series_signal_generator is
 end series_signal_generator;
 
 architecture Behavioral of series_signal_generator is
-    --type LUT_TYPE is array (0 to FFT_Size-1) of integer range -2**(N_bits-1) to 2**(N_bits-1)-1;
     type LUT_TYPE is array (0 to FFT_Size-1) of std_logic_vector(N_bits-1 downto 0);
     type theta_TYPE is array (0 to N_chan-1) of integer range 0 to FFT_Size-1;
     signal cos_LUT, sin_LUT, sinc_LUT, rect_LUT, rampa_LUT : LUT_TYPE;
-    --signal theta_index      : integer range 0 to FFT_Size-1 := 0;
     signal theta_index      : theta_TYPE := (others => 0);
     signal bit_counter : integer range 0 to N_bits-1 := 0;
     signal data_temp : integer range -2**(N_bits-1) to 2**(N_bits-1)-1;
@@ -38,25 +36,17 @@ begin
     begin
         for i in 0 to FFT_Size-1 loop
             angle := (2.0 * MATH_PI * real(i)) / real(FFT_Size);
-            --cos_LUT(i) <= integer(round(32767.0 * cos(angle)));
-            --sin_LUT(i) <= integer(round(32767.0 * sin(angle)));
             cos_LUT(i) <= std_logic_vector(to_signed(integer(round(real(2**(N_bits-1)-1) * cos(angle))), N_bits));
             sin_LUT(i) <= std_logic_vector(to_signed(integer(round(real(2**(N_bits-1)-1) * sin(angle))), N_bits));
-            --rampa_LUT(i) <= std_logic_vector(to_signed(i,N_bits));
-            rampa_LUT(i) <= std_logic_vector(to_signed(5,N_bits));
             if i = 0 then
-                --sinc_LUT(i) <= 0;
                 sinc_LUT(i) <= (N_bits-1 downto 0 => '0');
             else
-                --sinc_LUT(i) <= integer(round(32767.0 * sin(angle-4.0*2.0*3.14) / (angle-4.0*2.0*3.14)));
                 sinc_LUT(i) <= std_logic_vector(to_signed(integer(round(real(2**(N_bits-1)-1) * sin(angle-4.0*2.0*3.14) / (angle-4.0*2.0*3.14))), N_bits));
             end if;
             
             if i > (FFT_Size / 2)-3 and  i < (FFT_Size / 2)+3 then
-                --rect_LUT(i) <= 32767;
                 rect_LUT(i) <= std_logic_vector(to_signed(2**(N_bits-1)-1, N_bits));
             else
-                --rect_LUT(i) <= 0;
                 rect_LUT(i) <= (N_bits-1 downto 0 => '0');
             end if;
         end loop;
@@ -78,7 +68,6 @@ begin
                     bit_counter <= bit_counter +1;            
                 end if;  
             end loop;
-            --o_data <= sin_LUT(theta_index)(N_bits-1 - bit_counter);
             
             -- si el valor anterior de bit counter no es el máximo, no hay que actualizar el theta index, y se saca el bit que toque de la lut.
             if bit_counter = 0 then 
@@ -88,12 +77,7 @@ begin
                 o_f_sync <= '0';
             end if;
                         
-            --if bit_counter = N_bits-1 then
-            --    theta_index <= (theta_index + 1) mod FFT_Size;
-            --    bit_counter <= 0;
-            --else 
-            --    bit_counter <= bit_counter +1;            
-            --end if;                 
+            
        end if;
     end process;
     
