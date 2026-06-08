@@ -29,10 +29,7 @@ architecture Behavioral of FFT_buffer_out_v2 is
     type FFT_multichannel_window is array (0 to N_chan*FFT_size-1)
         of std_logic_vector(2*N_bits-1 downto 0);  -- Para magnitud al cuadrado quitar -1
 
-    signal FFT_buffer : FFT_multichannel_window;  -- ❗ SIN inicialización
-
-    attribute ram_style : string;
-    attribute ram_style of FFT_buffer : signal is "block";  -- ❗ FORZAR BRAM
+    signal FFT_buffer : FFT_multichannel_window; 
 
     signal old_Tvalid : std_logic := '0';
     signal read_enable : std_logic := '0';
@@ -119,7 +116,6 @@ begin
             if write_enable = '1' then
                 if spi_ready = '1' then
                     o_SPI_enable <= '1';
-                    --write_counter <= (write_counter + 1) mod 2*N_chan*FFT_size; -- AÑADIDO MODULO
                     if write_counter <  2*N_chan*FFT_size-1 then
                         write_counter <= (write_counter + 1);
                     else
