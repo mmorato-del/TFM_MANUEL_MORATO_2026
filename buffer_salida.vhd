@@ -11,7 +11,7 @@ entity FFT_buffer_out_v2 is
   Port (
     i_clk : in std_logic;
     i_Tvalid : in std_logic;
-    i_FFT_word : in std_logic_vector(2*N_bits-1 downto 0); -- Para magnitud al cuadrado quitar -1
+    i_FFT_word : in std_logic_vector(2*N_bits-1 downto 0); 
 
     i_SPI_busy : in std_logic;
 
@@ -27,7 +27,7 @@ end FFT_buffer_out_v2;
 architecture Behavioral of FFT_buffer_out_v2 is
 
     type FFT_multichannel_window is array (0 to N_chan*FFT_size-1)
-        of std_logic_vector(2*N_bits-1 downto 0);  -- Para magnitud al cuadrado quitar -1
+        of std_logic_vector(2*N_bits-1 downto 0);  
 
     signal FFT_buffer : FFT_multichannel_window; 
 
